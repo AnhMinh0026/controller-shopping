@@ -1,3 +1,4 @@
+import { ScrollToTopButton } from "../../components/common/ScrollToTopButton";
 import Header from "../../components/layout/Header/Header";
 import { Features } from "../../components/sections/Features";
 import { Hero } from "../../components/sections/Hero";
@@ -10,6 +11,7 @@ export default function Home() {
         <Hero />
         <Features />
       </main>
+      <ScrollToTopButton />
     </div>
   );
 }
