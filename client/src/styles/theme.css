@@ -1,0 +1,14 @@
+/*
+ * Design tokens - single source of truth for brand colors.
+ * Values are space-separated RGB channels so Tailwind can apply opacity
+ * (e.g. `bg-brand/50`) and raw CSS can use `rgb(var(--color-brand) / 0.5)`.
+ *
+ * Usage:
+ *   Tailwind class : text-brand, border-brand, bg-brand/60, hover:text-brand
+ *   Inline / filter: rgb(var(--color-brand) / 0.5)
+ */
+:root {
+  --color-brand: 40 90 250; /* #285afa - primary accent (headlines, stats, glow) */
+  --color-accent: 0 216 255; /* #00D8FF - Flydigi cyan */
+}
+
