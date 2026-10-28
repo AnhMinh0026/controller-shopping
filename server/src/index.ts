@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { connectDB } from "./config/db";
+import adminRoutes from "./routes/adminRoutes";
 import authRoutes from "./routes/authRoutes";
 import productRoutes from "./routes/productRoutes";
 import { initZaloOtpBot } from "./services/zaloBot.service";
@@ -50,6 +51,7 @@ app.use(express.json()); // Parse incoming JSON payloads
 
 // Routes configuration
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 
 // Test API endpoint

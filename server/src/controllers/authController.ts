@@ -62,12 +62,45 @@ function normalizeIdentifier(channel: OtpChannel, raw: string): string {
   return channel === "email" ? normalizeEmail(raw) : normalizePhone(raw);
 }
 
+/**
+ * Automatically promotes a user to "admin" if their email or phone is listed
+ * in `ADMIN_EMAIL` or `ADMIN_PHONE` environment variables.
+ */
+async function syncConfiguredAdminRole(user: IUser): Promise<void> {
+  if (user.role === "admin") return;
+
+  const adminEmails = (process.env.ADMIN_EMAIL || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+
+  const adminPhones = (process.env.ADMIN_PHONE || "")
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => normalizePhone(p));
+
+  const matchesEmail = Boolean(
+    user.email && adminEmails.includes(user.email.toLowerCase()),
+  );
+  const matchesPhone = Boolean(
+    user.phone && adminPhones.includes(normalizePhone(user.phone)),
+  );
+
+  if (matchesEmail || matchesPhone) {
+    user.role = "admin";
+    await user.save();
+  }
+}
+
 async function issueSessionTokens(
   user: IUser,
   req: Request,
   res: Response,
   existingFamilyId?: string,
 ) {
+  await syncConfiguredAdminRole(user);
+
   const accessToken = signAccessToken({
     sub: String(user._id),
     role: user.role,
@@ -727,6 +760,8 @@ export const getCurrentUser = async (
       });
       return;
     }
+
+    await syncConfiguredAdminRole(user);
 
     res.status(200).json({
       success: true,

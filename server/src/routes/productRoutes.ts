@@ -1,24 +1,25 @@
 import express from "express";
 import {
-  getProducts,
-  getProductBySlug,
   createProduct,
-  updateProduct,
   deleteProduct,
+  getProductBySlug,
+  getProducts,
+  updateProduct,
 } from "../controllers/productController";
+import { requireAdmin, requireAuth } from "../middlewares/auth.middleware";
 
 const router = express.Router();
 
 router
   .route("/")
-  .get(getProducts) // Get all products
-  .post(createProduct); // Add new product
+  .get(getProducts) // Public: Customer & Guest can view products
+  .post(requireAuth, requireAdmin, createProduct); // Admin only: Add new product
 
 router
   .route("/:slug")
-  .get(getProductBySlug) // Get product details by slug
-  .put(updateProduct) // Update product details by slug
-  .patch(updateProduct) // Partial update product details by slug
-  .delete(deleteProduct); // Delete product by slug
+  .get(getProductBySlug) // Public: Customer & Guest can view product detail
+  .put(requireAuth, requireAdmin, updateProduct) // Admin only: Full update product
+  .patch(requireAuth, requireAdmin, updateProduct) // Admin only: Partial update product
+  .delete(requireAuth, requireAdmin, deleteProduct); // Admin only: Delete product
 
 export default router;

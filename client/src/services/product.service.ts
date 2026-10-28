@@ -124,6 +124,15 @@ export async function getProducts(
   };
 }
 
+export interface UpsertProductPayload {
+  name: string;
+  price: number;
+  description: string;
+  features: string[];
+  stock: number;
+  images: string[];
+}
+
 export async function getProductBySlug(slug: string): Promise<Product> {
   const response = await axiosClient.get<RawProductDetailApiResponse>(
     `/products/${encodeURIComponent(slug)}`,
@@ -131,7 +140,35 @@ export async function getProductBySlug(slug: string): Promise<Product> {
   return normalizeProduct(response.data.data);
 }
 
+export async function createProduct(
+  payload: UpsertProductPayload,
+): Promise<Product> {
+  const response = await axiosClient.post<RawProductDetailApiResponse>(
+    "/products",
+    payload,
+  );
+  return normalizeProduct(response.data.data);
+}
+
+export async function updateProduct(
+  slug: string,
+  payload: Partial<UpsertProductPayload>,
+): Promise<Product> {
+  const response = await axiosClient.put<RawProductDetailApiResponse>(
+    `/products/${encodeURIComponent(slug)}`,
+    payload,
+  );
+  return normalizeProduct(response.data.data);
+}
+
+export async function deleteProduct(slug: string): Promise<void> {
+  await axiosClient.delete(`/products/${encodeURIComponent(slug)}`);
+}
+
 export const productService = {
   getProducts,
   getProductBySlug,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 };
