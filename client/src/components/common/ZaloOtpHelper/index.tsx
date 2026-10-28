@@ -83,9 +83,7 @@ export default function ZaloOtpHelper({
 
         {/* Step-by-step instructions */}
         <div className="flex-1 space-y-2 text-[11.5px] leading-relaxed text-gray-300">
-          <p className="font-semibold text-white">
-            Cách lấy mã xác thực 6 số:
-          </p>
+          <p className="font-semibold text-white">Cách lấy mã xác thực 6 số:</p>
           <ol className="list-inside list-decimal space-y-1.5 text-gray-300">
             <li>
               Quét <strong>mã QR</strong> bên cạnh bằng ứng dụng Zalo hoặc bấm
@@ -129,9 +127,8 @@ export default function ZaloOtpHelper({
         rel="noopener noreferrer"
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-brand bg-brand px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition-all duration-300 hover:bg-transparent hover:text-brand hover:shadow-[0_0_20px_rgb(var(--color-brand)/0.4)]"
       >
-        <span>💬 Mở đoạn chat với Zalo Bot</span>
+        <span>Mở đoạn chat với Zalo Bot</span>
       </a>
     </div>
   );
 }
-
