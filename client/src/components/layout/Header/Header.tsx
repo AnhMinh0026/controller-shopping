@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../../../store/useAuthStore";
 
 interface NavItem {
   label: string;
@@ -15,6 +16,10 @@ const NAV_ITEMS: readonly NavItem[] = [
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const logout = useAuthStore((state) => state.logout);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,18 +83,40 @@ export default function Header() {
 
         {/* Auth Actions & Mobile Hamburger */}
         <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-          <a
-            href="#login"
-            className="hidden px-2.5 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 transition-colors hover:text-white sm:inline-block lg:px-3 lg:py-2"
-          >
-            Login
-          </a>
-          <a
-            href="#signup"
-            className="hidden rounded-full border border-brand bg-brand px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-white transition-all duration-300 hover:bg-transparent hover:text-brand sm:inline-block md:px-5 md:py-2 md:text-xs"
-          >
-            Sign Up
-          </a>
+          {isAuthenticated && user ? (
+            <div className="hidden items-center gap-3 sm:flex">
+              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-[11px] font-bold uppercase text-white">
+                  {user.name.charAt(0)}
+                </span>
+                <span className="max-w-[120px] truncate text-xs font-semibold text-white">
+                  {user.name}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => void logout()}
+                className="rounded-full border border-white/20 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-white/80 transition-colors hover:border-red-400 hover:text-red-300 md:text-xs"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="hidden px-2.5 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/80 transition-colors hover:text-white sm:inline-block lg:px-3 lg:py-2"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="hidden rounded-full border border-brand bg-brand px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-white transition-all duration-300 hover:bg-transparent hover:text-brand sm:inline-block md:px-5 md:py-2 md:text-xs"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
 
           {/* Hamburger Button (< md) */}
           <button
@@ -134,22 +161,40 @@ export default function Header() {
             </ul>
 
             {/* Auth buttons inside mobile menu on extra-small screens (< sm) */}
-            <div className="mt-3 grid grid-cols-2 gap-2.5 border-t border-white/10 pt-3 sm:hidden">
-              <a
-                href="#login"
-                onClick={closeMobileMenu}
-                className="flex items-center justify-center rounded-full border border-white/20 py-2 text-xs font-semibold uppercase tracking-widest text-white/90 transition-colors hover:border-white hover:text-white"
-              >
-                Login
-              </a>
-              <a
-                href="#signup"
-                onClick={closeMobileMenu}
-                className="flex items-center justify-center rounded-full border border-brand bg-brand py-2 text-xs font-semibold uppercase tracking-widest text-white transition-all duration-300 hover:bg-transparent hover:text-brand"
-              >
-                Sign Up
-              </a>
-            </div>
+            {isAuthenticated && user ? (
+              <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3 sm:hidden">
+                <span className="text-xs font-semibold text-white">
+                  {user.name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMobileMenu();
+                    void logout();
+                  }}
+                  className="rounded-full border border-white/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-red-300"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="mt-3 grid grid-cols-2 gap-2.5 border-t border-white/10 pt-3 sm:hidden">
+                <Link
+                  to="/login"
+                  onClick={closeMobileMenu}
+                  className="flex items-center justify-center rounded-full border border-white/20 py-2 text-xs font-semibold uppercase tracking-widest text-white/90 transition-colors hover:border-white hover:text-white"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={closeMobileMenu}
+                  className="flex items-center justify-center rounded-full border border-brand bg-brand py-2 text-xs font-semibold uppercase tracking-widest text-white transition-all duration-300 hover:bg-transparent hover:text-brand"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </nav>
         </div>
       </div>
