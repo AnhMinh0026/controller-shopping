@@ -42,16 +42,7 @@ export const createProduct = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const {
-      name,
-      price,
-      description,
-      features,
-      stock,
-      images,
-      has3DModel,
-      model3DUrl,
-    } = req.body;
+    const { name, price, description, features, stock, images } = req.body;
 
     // 1. Auto generate slug from product name
     const slug = slugify(name, {
@@ -78,11 +69,71 @@ export const createProduct = async (
       features,
       stock,
       images,
-      has3DModel,
-      model3DUrl,
     });
 
     res.status(201).json({ success: true, data: product });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Lỗi Server";
+    res.status(500).json({ success: false, message: errorMessage });
+  }
+};
+
+// [PUT] /api/products/:slug
+// Update product details by slug
+export const updateProduct = async (
+  req: Request<{ slug: string }>,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { slug } = req.params;
+    const { name, price, description, features, stock, images } = req.body;
+
+    // 1. Find existing product by slug
+    const product = await Product.findOne({ slug });
+    if (!product) {
+      res.status(404).json({ success: false, message: "Product not found" });
+      return;
+    }
+
+    // 2. If name is changed, regenerate slug and check for duplicate slug
+    if (typeof name === "string" && name.trim() !== "") {
+      const trimmedName = name.trim();
+      const newSlug = slugify(trimmedName, {
+        lower: true,
+        strict: true,
+        locale: "vi",
+      });
+
+      if (newSlug !== product.slug) {
+        const duplicateProduct = await Product.findOne({
+          slug: newSlug,
+          _id: { $ne: product._id },
+        });
+
+        if (duplicateProduct) {
+          res
+            .status(400)
+            .json({ success: false, message: "Product slug already exists" });
+          return;
+        }
+
+        product.slug = newSlug;
+      }
+
+      product.name = trimmedName;
+    }
+
+    // 3. Update other fields if provided in request body
+    if (price !== undefined) product.price = price;
+    if (description !== undefined) product.description = description;
+    if (features !== undefined) product.features = features;
+    if (stock !== undefined) product.stock = stock;
+    if (images !== undefined) product.images = images;
+
+    // 4. Save updated product (triggers Mongoose schema validators)
+    const updatedProduct = await product.save();
+
+    res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Lỗi Server";
     res.status(500).json({ success: false, message: errorMessage });

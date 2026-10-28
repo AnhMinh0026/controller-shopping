@@ -9,8 +9,6 @@ export interface IProduct extends Document {
   features: string[];
   stock: number;
   images: string[];
-  has3DModel: boolean;
-  model3DUrl?: string;
 }
 
 // 2. Mongoose Schema: A protective layer class, checks data before pushing it into MongoDB
@@ -35,6 +33,7 @@ const productSchema: Schema = new Schema(
     description: {
       type: String,
       required: [true, "Product description is required"],
+      trim: true,
     },
     features: {
       type: [String],
@@ -49,13 +48,6 @@ const productSchema: Schema = new Schema(
     images: {
       type: [String],
       required: [true, "Product must have at least 1 image"],
-    },
-    has3DModel: {
-      type: Boolean,
-      default: false,
-    },
-    model3DUrl: {
-      type: String,
     },
   },
   {

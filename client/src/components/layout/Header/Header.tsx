@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface NavItem {
   label: string;
-  href: string;
+  to: string;
 }
 
 const NAV_ITEMS: readonly NavItem[] = [
-  { label: "Products", href: "#products" },
-  { label: "Support", href: "#support" },
-  { label: "About Us", href: "#about" },
+  { label: "Products", to: "/products" },
+  { label: "Support", to: "/#support" },
+  { label: "About Us", to: "/#about" },
 ];
 
 export default function Header() {
@@ -47,8 +48,8 @@ export default function Header() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <a
-          href="/"
+        <Link
+          to="/"
           aria-label="Flydigi home"
           className="flex shrink-0 items-center"
         >
@@ -57,19 +58,19 @@ export default function Header() {
             alt="Flydigi"
             className="h-7 w-auto object-contain sm:h-8 md:h-9 lg:h-10"
           />
-        </a>
+        </Link>
 
         {/* Desktop & Tablet Navigation */}
         <nav aria-label="Main navigation" className="hidden md:block">
           <ul className="flex items-center gap-6 lg:gap-10 xl:gap-12">
-            {NAV_ITEMS.map(({ label, href }) => (
-              <li key={href}>
-                <a
-                  href={href}
+            {NAV_ITEMS.map(({ label, to }) => (
+              <li key={to}>
+                <Link
+                  to={to}
                   className="text-xs font-medium uppercase tracking-widest text-white/80 transition-colors hover:text-white lg:text-[13px]"
                 >
                   {label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -119,15 +120,15 @@ export default function Header() {
             className="mx-auto flex max-w-7xl flex-col gap-1 px-4 pb-5 pt-3 sm:px-6"
           >
             <ul className="flex flex-col gap-1">
-              {NAV_ITEMS.map(({ label, href }) => (
-                <li key={href}>
-                  <a
-                    href={href}
+              {NAV_ITEMS.map(({ label, to }) => (
+                <li key={to}>
+                  <Link
+                    to={to}
                     onClick={closeMobileMenu}
                     className="block rounded-lg px-3 py-2.5 text-xs font-medium uppercase tracking-widest text-white/80 transition-colors hover:bg-white/5 hover:text-white"
                   >
                     {label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -176,4 +177,3 @@ function MenuIcon({ isOpen }: { isOpen: boolean }) {
     </svg>
   );
 }
-
