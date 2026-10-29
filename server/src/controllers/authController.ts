@@ -289,8 +289,8 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
 
       if (phoneResult.provider === "zalo_bot") {
         responseMessage = pushedToZalo
-          ? "Mã OTP 6 số đã được gửi trực tiếp vào tin nhắn Zalo của bạn!"
-          : "Mã OTP đã sẵn sàng! Hãy quét mã QR hoặc bấm nút Mở Zalo bên dưới và nhắn 'otp' để nhận mã.";
+          ? "A 6-digit OTP code has been delivered directly to your Zalo chat!"
+          : "Verification code is ready! Scan the QR code or click 'Open Zalo Bot Chat' below and send 'otp' to receive your code.";
       } else {
         responseMessage = "Verification code has been sent to your phone.";
       }

@@ -8,7 +8,7 @@ export const getProducts = async (req: Request, res: Response) => {
     const products = await Product.find({}).sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: products });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Lỗi Server";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     res.status(500).json({ success: false, message: errorMessage });
   }
 };
@@ -30,7 +30,7 @@ export const getProductBySlug = async (
 
     res.status(200).json({ success: true, data: product });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Lỗi Server";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     res.status(500).json({ success: false, message: errorMessage });
   }
 };
@@ -73,7 +73,7 @@ export const createProduct = async (
 
     res.status(201).json({ success: true, data: product });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Lỗi Server";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     res.status(500).json({ success: false, message: errorMessage });
   }
 };
@@ -135,7 +135,7 @@ export const updateProduct = async (
 
     res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Lỗi Server";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     res.status(500).json({ success: false, message: errorMessage });
   }
 };
@@ -161,7 +161,7 @@ export const deleteProduct = async (
       .status(200)
       .json({ success: true, message: "Product deleted successfully" });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Lỗi Server";
+    const errorMessage = error instanceof Error ? error.message : "Server error";
     res.status(500).json({ success: false, message: errorMessage });
   }
 };

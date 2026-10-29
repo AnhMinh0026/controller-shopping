@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster } from "sonner";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminDashboardPage from "./pages/Admin";
 import Home from "./pages/Home";
@@ -18,6 +19,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <Toaster position="top-right" richColors theme="dark" closeButton />
       <Routes>
         {/* Public Routes (Guest, Customer & Admin) */}
         <Route path="/" element={<Home />} />

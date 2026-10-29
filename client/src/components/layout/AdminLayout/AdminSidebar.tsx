@@ -32,27 +32,27 @@ export default function AdminSidebar({
   const navItems = [
     {
       id: "overview" as const,
-      label: "Tổng quan",
+      label: "Overview",
       icon: LayoutDashboard,
       badge: undefined,
     },
     {
       id: "products" as const,
-      label: "Quản lý Sản phẩm",
+      label: "Products",
       icon: Boxes,
       badge: undefined,
     },
     {
       id: "users" as const,
-      label: "Người dùng & Phân quyền",
+      label: "Users & Roles",
       icon: Users,
       badge: "RBAC",
     },
     {
       id: "orders" as const,
-      label: "Đơn hàng",
+      label: "Orders",
       icon: ShoppingBag,
-      badge: "Sắp có",
+      badge: "Coming Soon",
       disabled: true,
     },
   ];
@@ -98,7 +98,7 @@ export default function AdminSidebar({
             type="button"
             onClick={onCloseMobile}
             className="rounded-lg p-1.5 text-gray-400 hover:bg-white/5 hover:text-white lg:hidden"
-            aria-label="Đóng menu"
+            aria-label="Close menu"
           >
             <X className="h-5 w-5" />
           </button>
@@ -107,7 +107,7 @@ export default function AdminSidebar({
         {/* Navigation Links */}
         <div className="flex-1 overflow-y-auto px-3 py-5">
           <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-            Menu Quản trị
+            Admin Menu
           </div>
           <nav className="space-y-1">
             {navItems.map((item) => {
@@ -160,7 +160,7 @@ export default function AdminSidebar({
           </nav>
 
           <div className="mt-8 px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-            Lối tắt Cửa hàng
+            Storefront Shortcut
           </div>
           <Link
             to="/"
@@ -170,9 +170,9 @@ export default function AdminSidebar({
           >
             <div className="flex items-center gap-3">
               <ExternalLink className="h-4 w-4 text-cyan-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              <span>Xem trang Khách hàng</span>
+              <span>View Storefront</span>
             </div>
-            <span className="text-[10px] text-gray-500">Mở tab mới</span>
+            <span className="text-[10px] text-gray-500">New tab</span>
           </Link>
         </div>
 
@@ -188,7 +188,7 @@ export default function AdminSidebar({
                   {user?.name || "Admin"}
                 </p>
                 <p className="text-[10px] font-medium text-emerald-400">
-                  ● Đang hoạt động
+                  ● Active Now
                 </p>
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function AdminSidebar({
             <button
               type="button"
               onClick={() => void logout()}
-              title="Đăng xuất"
+              title="Log out"
               className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
             >
               <LogOut className="h-4 w-4" />

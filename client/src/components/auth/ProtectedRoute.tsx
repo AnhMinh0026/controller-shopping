@@ -48,29 +48,29 @@ export default function ProtectedRoute({
               403 FORBIDDEN
             </span>
             <h1 className="mt-4 text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
-              Không đủ quyền truy cập
+              Access Denied
             </h1>
             <p className="mt-3 text-sm leading-relaxed text-gray-400">
-              Tài khoản của bạn hiện đang có vai trò{" "}
-              <strong className="uppercase text-white">{user.role}</strong>. Khu
-              vực này chỉ dành cho{" "}
+              Your account currently has the role{" "}
+              <strong className="uppercase text-white">{user.role}</strong>. This
+              restricted section requires{" "}
               <strong className="uppercase text-brand">
                 {allowedRoles.join(" / ")}
-              </strong>
-              .
+              </strong>{" "}
+              permissions.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link
                 to="/"
                 className="rounded-full border border-brand bg-brand px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-transparent hover:text-brand"
               >
-                Về Trang Chủ
+                Back to Home
               </Link>
               <Link
                 to="/products"
                 className="rounded-full border border-white/20 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white/80 transition-colors hover:border-white hover:text-white"
               >
-                Xem Sản Phẩm
+                Browse Products
               </Link>
             </div>
           </div>

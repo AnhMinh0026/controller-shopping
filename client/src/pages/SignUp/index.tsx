@@ -44,10 +44,10 @@ export default function SignUpPage() {
               JOIN FLYDIGI
             </p>
             <h1 className="mt-2 text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
-              TẠO TÀI KHOẢN
+              CREATE ACCOUNT
             </h1>
             <p className="mt-2 text-xs text-gray-400">
-              Đăng ký xác thực qua Email hoặc Số điện thoại (Zalo), hoặc tiếp tục với Google.
+              Sign up with Email or Phone Number (Zalo), or continue with Google.
             </p>
           </div>
 
@@ -83,7 +83,7 @@ export default function SignUpPage() {
                   : "text-gray-400 hover:text-white"
               }`}
             >
-              Số Điện Thoại
+              Phone Number
             </button>
           </div>
 
@@ -130,7 +130,7 @@ export default function SignUpPage() {
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-white/10" />
             <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-500">
-              HOẶC
+              OR
             </span>
             <div className="h-px flex-1 bg-white/10" />
           </div>
@@ -143,12 +143,12 @@ export default function SignUpPage() {
 
           {/* Footer Link */}
           <p className="mt-6 text-center text-xs text-gray-400">
-            Đã có tài khoản?{" "}
+            Already have an account?{" "}
             <Link
               to="/login"
               className="font-bold uppercase tracking-wider text-brand hover:underline"
             >
-              Đăng Nhập
+              Sign In
             </Link>
           </p>
         </div>

@@ -46,7 +46,7 @@ export default function ProductGallery({
                 key={`${imgUrl}-${index}`}
                 type="button"
                 onClick={() => onSelectImage(imgUrl)}
-                aria-label={`Xem ảnh ${index + 1} của ${product.name}`}
+                aria-label={`View image ${index + 1} of ${product.name}`}
                 className={`relative h-20 w-20 overflow-hidden rounded-xl border bg-[#0b0b0f] p-2 transition-all duration-200 sm:h-24 sm:w-24 ${
                   isSelected
                     ? "border-brand shadow-[0_0_15px_rgb(var(--color-brand)/0.35)]"

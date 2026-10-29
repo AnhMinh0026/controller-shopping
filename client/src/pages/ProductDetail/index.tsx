@@ -33,11 +33,11 @@ export default function ProductDetailPage() {
           className="mb-8 flex flex-wrap items-center gap-2 text-xs uppercase tracking-widest text-gray-400"
         >
           <Link to="/" className="transition-colors hover:text-white">
-            Trang Chủ
+            Home
           </Link>
           <span>/</span>
           <Link to="/products" className="transition-colors hover:text-white">
-            Sản Phẩm
+            Products
           </Link>
           {product && (
             <>
@@ -52,19 +52,19 @@ export default function ProductDetailPage() {
         ) : error || !product ? (
           <div className="rounded-2xl border border-white/10 bg-[#0b0b0f] px-6 py-20 text-center">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-brand">
-              SẢN PHẨM KHÔNG TỒN TẠI
+              PRODUCT NOT FOUND
             </p>
             <h1 className="mt-3 text-2xl font-extrabold uppercase tracking-wide text-white sm:text-3xl">
-              {error || "Không tìm thấy thông tin sản phẩm"}
+              {error || "Product information not found"}
             </h1>
             <p className="mx-auto mt-3 max-w-md text-sm text-gray-400">
-              Mẫu tay cầm bạn đang tìm kiếm có thể đã bị gỡ hoặc đường dẫn không chính xác.
+              The controller you are looking for may have been removed or the link is invalid.
             </p>
             <Link
               to="/products"
               className="mt-8 inline-flex items-center gap-2 rounded-full border border-brand px-6 py-3 text-xs font-bold uppercase tracking-widest text-brand transition-all duration-300 hover:bg-brand hover:text-white"
             >
-              Quay lại danh mục sản phẩm
+              Back to Products
             </Link>
           </div>
         ) : (

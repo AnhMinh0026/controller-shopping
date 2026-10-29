@@ -22,7 +22,7 @@ export default function ProductPurchaseBar({
             type="button"
             disabled={isOutOfStock || quantity <= 1}
             onClick={onDecrease}
-            aria-label="Giảm số lượng"
+            aria-label="Decrease quantity"
             className="h-11 w-11 text-base font-bold text-white/80 transition-colors hover:text-brand disabled:cursor-not-allowed disabled:opacity-40"
           >
             −
@@ -34,7 +34,7 @@ export default function ProductPurchaseBar({
             type="button"
             disabled={isOutOfStock || quantity >= maxStock}
             onClick={onIncrease}
-            aria-label="Tăng số lượng"
+            aria-label="Increase quantity"
             className="h-11 w-11 text-base font-bold text-white/80 transition-colors hover:text-brand disabled:cursor-not-allowed disabled:opacity-40"
           >
             +
@@ -46,11 +46,11 @@ export default function ProductPurchaseBar({
           type="button"
           disabled={isOutOfStock}
           onClick={() => {
-            alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng (Chức năng Demo).`);
+            alert(`Added ${quantity} item(s) to cart (Demo Feature).`);
           }}
           className="flex-1 rounded-full border border-brand bg-brand py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-transparent hover:text-brand hover:shadow-[0_0_25px_rgb(var(--color-brand)/0.45)] disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/5 disabled:text-gray-500 disabled:shadow-none sm:py-4"
         >
-          {isOutOfStock ? "Tạm Hết Hàng" : "Thêm Vào Giỏ Hàng"}
+          {isOutOfStock ? "Out of Stock" : "Add to Cart"}
         </button>
       </div>
     </div>

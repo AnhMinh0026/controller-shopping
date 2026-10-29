@@ -11,20 +11,20 @@ interface AdminHeaderProps {
 
 const VIEW_TITLES: Record<AdminViewType, { title: string; subtitle: string }> = {
   overview: {
-    title: "Tổng quan Hệ thống",
-    subtitle: "Số liệu thống kê thời gian thực & hoạt động cửa hàng",
+    title: "System Overview",
+    subtitle: "Real-time analytics & store performance",
   },
   products: {
-    title: "Quản lý Sản phẩm",
-    subtitle: "Thêm, cập nhật giá, tồn kho và danh mục tay cầm Flydigi",
+    title: "Product Management",
+    subtitle: "Add, update pricing, inventory, and Flydigi controllers",
   },
   users: {
-    title: "Người dùng & Phân quyền",
-    subtitle: "Quản lý vai trò (Admin / Customer) & bảo mật tài khoản",
+    title: "Users & Access Control",
+    subtitle: "Manage roles (Admin / Customer) & account security",
   },
   orders: {
-    title: "Quản lý Đơn hàng",
-    subtitle: "Theo dõi đơn mua và trạng thái thanh toán",
+    title: "Order Management",
+    subtitle: "Track purchases & payment status",
   },
 };
 
@@ -45,7 +45,7 @@ export default function AdminHeader({
           type="button"
           onClick={onOpenMobileSidebar}
           className="rounded-lg border border-white/10 p-2 text-gray-400 hover:bg-white/5 hover:text-white lg:hidden"
-          aria-label="Mở menu điều hướng"
+          aria-label="Toggle navigation menu"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -71,7 +71,7 @@ export default function AdminHeader({
         {/* System Online Badge */}
         <div className="hidden items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-medium text-emerald-400 md:flex">
           <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-          <span>Hệ thống trực tuyến</span>
+          <span>System Online</span>
         </div>
 
         {/* Refresh Button */}
@@ -79,7 +79,7 @@ export default function AdminHeader({
           type="button"
           onClick={onRefreshData}
           disabled={isRefreshing}
-          title="Làm mới dữ liệu"
+          title="Refresh data"
           className="rounded-xl border border-white/10 bg-white/[0.03] p-2 text-gray-400 transition-colors hover:border-white/20 hover:text-white disabled:opacity-50"
         >
           <RefreshCw
@@ -94,7 +94,7 @@ export default function AdminHeader({
           className="flex items-center gap-2 rounded-xl border border-brand bg-brand px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-brand/20 transition-all hover:bg-transparent hover:text-brand"
         >
           <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Thêm Sản Phẩm</span>
+          <span className="hidden sm:inline">Add Product</span>
         </button>
       </div>
     </header>

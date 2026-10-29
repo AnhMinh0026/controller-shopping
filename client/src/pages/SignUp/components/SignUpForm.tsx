@@ -54,7 +54,7 @@ export default function SignUpForm({
           htmlFor="signup-name"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          Họ và Tên
+          Full Name
         </label>
         <input
           id="signup-name"
@@ -62,7 +62,7 @@ export default function SignUpForm({
           required
           minLength={2}
           disabled={otpSent}
-          placeholder="Nguyễn Văn A"
+          placeholder="John Doe"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="mt-2 w-full rounded-xl border border-white/15 bg-black/70 px-4 py-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-brand focus:outline-none disabled:opacity-60"
@@ -75,7 +75,7 @@ export default function SignUpForm({
           htmlFor="signup-identifier"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          {channel === "email" ? "Địa chỉ Email" : "Số Điện Thoại"}
+          {channel === "email" ? "Email Address" : "Phone Number"}
         </label>
         <input
           id="signup-identifier"
@@ -95,7 +95,7 @@ export default function SignUpForm({
           htmlFor="signup-password"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          Mật khẩu (tối thiểu 8 ký tự)
+          Password (min. 8 characters)
         </label>
         <input
           id="signup-password"
@@ -104,7 +104,7 @@ export default function SignUpForm({
           minLength={8}
           disabled={otpSent}
           autoComplete="new-password"
-          placeholder="Tạo mật khẩu bảo mật"
+          placeholder="Create a strong password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="mt-2 w-full rounded-xl border border-white/15 bg-black/70 px-4 py-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-brand focus:outline-none disabled:opacity-60"
@@ -125,7 +125,7 @@ export default function SignUpForm({
 
           <div className="mb-2 flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-widest text-gray-300">
-              Nhập mã OTP 6 số
+              Enter 6-Digit OTP Code
             </span>
             <button
               type="button"
@@ -135,7 +135,7 @@ export default function SignUpForm({
               }}
               className="text-[11px] font-semibold text-brand hover:underline"
             >
-              Sửa thông tin
+              Edit Details
             </button>
           </div>
 
@@ -146,14 +146,14 @@ export default function SignUpForm({
           />
 
           <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
-            <span>Chưa nhận được mã?</span>
+            <span>Didn't receive the code?</span>
             <button
               type="button"
               disabled={cooldown > 0 || isSubmitting}
               onClick={() => void onRequestOtp()}
               className="font-semibold text-brand transition-opacity hover:underline disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {cooldown > 0 ? `Gửi lại sau ${cooldown}s` : "Gửi lại OTP"}
+              {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
             </button>
           </div>
         </div>
@@ -165,10 +165,10 @@ export default function SignUpForm({
         className="w-full rounded-full border border-brand bg-brand py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-transparent hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting
-          ? "Đang xử lý..."
+          ? "Signing up..."
           : otpSent
-            ? "Xác Thực OTP & Đăng Ký"
-            : "Gửi Mã Xác Thực"}
+            ? "Verify OTP & Create Account"
+            : "Send Verification Code"}
       </button>
     </form>
   );

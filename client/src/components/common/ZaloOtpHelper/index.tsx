@@ -40,7 +40,7 @@ export default function ZaloOtpHelper({
           </span>
           <div>
             <p className="font-bold uppercase tracking-wider text-white">
-              Nhận mã OTP qua Zalo Bot
+              Receive OTP via Zalo Bot
             </p>
             <p className="text-[11px] text-gray-400">
               {displayBotName}{" "}
@@ -53,7 +53,7 @@ export default function ZaloOtpHelper({
 
         {pushedToZalo && (
           <span className="rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
-            Đã gửi tự động
+            Auto-Dispatched
           </span>
         )}
       </div>
@@ -61,7 +61,7 @@ export default function ZaloOtpHelper({
       {/* Status notice if already auto-pushed */}
       {pushedToZalo && (
         <div className="mt-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[11px] text-emerald-200">
-          ✅ Mã OTP 6 số đã được gửi thẳng vào khung chat Zalo của bạn!
+          ✅ Your 6-digit OTP code has been delivered straight to your Zalo chat!
         </div>
       )}
 
@@ -71,49 +71,48 @@ export default function ZaloOtpHelper({
         <div className="flex shrink-0 flex-col items-center rounded-xl border border-white/15 bg-white p-2 shadow-md">
           <img
             src={qrImageUrl}
-            alt={`Mã QR Zalo Bot ${displayBotName}`}
+            alt={`QR Code for Zalo Bot ${displayBotName}`}
             width={112}
             height={112}
             className="h-28 w-28 rounded-lg object-contain"
           />
           <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-gray-800">
-            Quét QR bằng Zalo
+            Scan QR with Zalo
           </span>
         </div>
 
         {/* Step-by-step instructions */}
         <div className="flex-1 space-y-2 text-[11.5px] leading-relaxed text-gray-300">
-          <p className="font-semibold text-white">Cách lấy mã xác thực 6 số:</p>
+          <p className="font-semibold text-white">How to get your 6-digit OTP:</p>
           <ol className="list-inside list-decimal space-y-1.5 text-gray-300">
             <li>
-              Quét <strong>mã QR</strong> bên cạnh bằng ứng dụng Zalo hoặc bấm
-              nút <strong>Mở đoạn chat với Bot</strong> bên dưới.
+              Scan the <strong>QR code</strong> with your Zalo mobile app or click{" "}
+              <strong>Open Zalo Bot Chat</strong> below.
             </li>
             <li>
-              Nhắn chữ{" "}
+              Send{" "}
               <code className="rounded bg-brand/25 px-1.5 py-0.5 font-mono font-bold text-white">
                 otp
               </code>{" "}
-              (hoặc số điện thoại của bạn) vào khung chat.
+              (or your phone number) into the chat.
             </li>
             <li>
-              Bot sẽ trả về ngay <strong>mã OTP 6 số</strong> để bạn nhập vào ô
-              bên dưới.
+              The Bot replies instantly with your <strong>6-digit OTP code</strong> to enter below.
             </li>
           </ol>
 
           {/* Copy Bot Username helper */}
           <div className="flex items-center gap-2 pt-1">
-            <span className="text-[11px] text-gray-400">Mã tìm kiếm Bot:</span>
+            <span className="text-[11px] text-gray-400">Bot Search ID:</span>
             <button
               type="button"
               onClick={() => void handleCopyUsername()}
               className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/60 px-2.5 py-1 font-mono text-[11px] text-white transition-colors hover:border-brand hover:text-brand"
-              title="Bấm để sao chép mã Bot"
+              title="Click to copy Bot Search ID"
             >
               <span>{displayBotUsername}</span>
               <span className="text-[10px] text-gray-400">
-                {copied ? "✓ Đã chép" : "Sao chép"}
+                {copied ? "✓ Copied" : "Copy"}
               </span>
             </button>
           </div>
@@ -127,7 +126,7 @@ export default function ZaloOtpHelper({
         rel="noopener noreferrer"
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-brand bg-brand px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white transition-all duration-300 hover:bg-transparent hover:text-brand hover:shadow-[0_0_20px_rgb(var(--color-brand)/0.4)]"
       >
-        <span>Mở đoạn chat với Zalo Bot</span>
+        <span>Open Zalo Bot Chat</span>
       </a>
     </div>
   );

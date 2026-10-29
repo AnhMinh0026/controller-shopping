@@ -24,10 +24,10 @@ export default function ProductInfo({ product, isOutOfStock }: ProductInfoProps)
             }`}
           />
           {isOutOfStock
-            ? "Hết Hàng"
+            ? "Out of Stock"
             : typeof product.stock === "number"
-              ? `Còn ${product.stock} sản phẩm`
-              : "Còn Hàng"}
+              ? `In Stock (${product.stock} available)`
+              : "In Stock"}
         </span>
 
         {product.category && (
@@ -55,7 +55,7 @@ export default function ProductInfo({ product, isOutOfStock }: ProductInfoProps)
       {product.description && (
         <div className="mt-6">
           <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-gray-400">
-            Tổng quan sản phẩm
+            Product Overview
           </h2>
           <p className="mt-2.5 text-sm leading-relaxed text-gray-300 sm:text-base">
             {product.description}
@@ -67,7 +67,7 @@ export default function ProductInfo({ product, isOutOfStock }: ProductInfoProps)
       {product.features && product.features.length > 0 && (
         <div className="mt-7">
           <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-gray-400">
-            Thông số & Tính năng nổi bật
+            Specifications & Key Features
           </h2>
           <ul className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-1">
             {product.features.map((feature, index) => (

@@ -46,10 +46,10 @@ export default function LoginPage() {
               FLYDIGI ACCOUNT
             </p>
             <h1 className="mt-2 text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
-              CHÀO MỪNG TRỞ LẠI
+              WELCOME BACK
             </h1>
             <p className="mt-2 text-xs text-gray-400">
-              Đăng nhập bằng Mật khẩu, mã OTP một lần hoặc tài khoản Google.
+              Sign in with password, one-time OTP code, or Google account.
             </p>
           </div>
 
@@ -67,7 +67,7 @@ export default function LoginPage() {
                   : "text-gray-400 hover:text-white"
               }`}
             >
-              Mật Khẩu
+              Password
             </button>
             <button
               type="button"
@@ -81,7 +81,7 @@ export default function LoginPage() {
                   : "text-gray-400 hover:text-white"
               }`}
             >
-              Mã OTP
+              OTP Code
             </button>
           </div>
 
@@ -136,7 +136,7 @@ export default function LoginPage() {
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-white/10" />
             <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-500">
-              HOẶC
+              OR
             </span>
             <div className="h-px flex-1 bg-white/10" />
           </div>
@@ -149,12 +149,12 @@ export default function LoginPage() {
 
           {/* Footer Link */}
           <p className="mt-6 text-center text-xs text-gray-400">
-            Chưa có tài khoản?{" "}
+            Don't have an account?{" "}
             <Link
               to="/signup"
               className="font-bold uppercase tracking-wider text-brand hover:underline"
             >
-              Đăng Ký Ngay
+              Sign Up Now
             </Link>
           </p>
         </div>

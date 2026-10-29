@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import type { AdminViewType } from "../../../components/layout/AdminLayout/AdminSidebar";
 import {
   adminService,
@@ -11,11 +12,6 @@ import {
   type Product,
   type UpsertProductPayload,
 } from "../../../services/product.service";
-
-export interface FeedbackMessage {
-  type: "success" | "error";
-  text: string;
-}
 
 export function useAdminDashboard() {
   const [currentView, setCurrentView] = useState<AdminViewType>("overview");
@@ -32,8 +28,6 @@ export function useAdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
 
-  const [feedback, setFeedback] = useState<FeedbackMessage | null>(null);
-
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setIsRefreshing(true);
     try {
@@ -45,11 +39,11 @@ export function useAdminDashboard() {
       setStats(statsData);
       setUsers(usersData);
       setProducts(productsData.data);
+      if (!isSilent) {
+        toast.success("Synchronized latest system data successfully.");
+      }
     } catch {
-      setFeedback({
-        type: "error",
-        text: "Không thể làm mới dữ liệu quản trị.",
-      });
+      toast.error("Failed to refresh admin data.");
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -71,10 +65,7 @@ export function useAdminDashboard() {
       })
       .catch(() => {
         if (!isMounted) return;
-        setFeedback({
-          type: "error",
-          text: "Không thể tải dữ liệu quản trị.",
-        });
+        toast.error("Failed to load admin dashboard data.");
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -87,7 +78,6 @@ export function useAdminDashboard() {
 
   const handleToggleRole = async (target: AdminUserItem) => {
     const nextRole: UserRole = target.role === "admin" ? "customer" : "admin";
-    setFeedback(null);
     try {
       const result = await adminService.updateUserRole(target.id, nextRole);
       setUsers((prev) =>
@@ -95,42 +85,23 @@ export function useAdminDashboard() {
       );
       const updatedStats = await adminService.getAdminStats();
       setStats(updatedStats);
-      setFeedback({
-        type: "success",
-        text: `Đã thay đổi vai trò của "${target.name}" thành ${nextRole.toUpperCase()}.`,
-      });
+      toast.success(
+        `Updated role for "${target.name}" to ${nextRole.toUpperCase()}.`,
+      );
     } catch {
-      setFeedback({
-        type: "error",
-        text: "Không thể thay đổi quyền tài khoản này.",
-      });
+      toast.error("Failed to update role for this user.");
     }
   };
 
   const handleDeleteUser = async (target: AdminUserItem) => {
-    if (
-      !window.confirm(
-        `Xác nhận xóa người dùng "${target.name}"? Hành động này không thể hoàn tác.`,
-      )
-    ) {
-      return;
-    }
-
-    setFeedback(null);
     try {
       await adminService.deleteUser(target.id);
       setUsers((prev) => prev.filter((item) => item.id !== target.id));
       const updatedStats = await adminService.getAdminStats();
       setStats(updatedStats);
-      setFeedback({
-        type: "success",
-        text: `Đã xóa tài khoản "${target.name}".`,
-      });
+      toast.success(`User account "${target.name}" deleted successfully.`);
     } catch {
-      setFeedback({
-        type: "error",
-        text: "Không thể xóa tài khoản này.",
-      });
+      toast.error("Failed to delete user account.");
     }
   };
 
@@ -139,31 +110,20 @@ export function useAdminDashboard() {
     slug?: string,
   ) => {
     setIsSavingProduct(true);
-    setFeedback(null);
-
     try {
       if (slug) {
         await productService.updateProduct(slug, payload);
-        setFeedback({
-          type: "success",
-          text: `Đã cập nhật sản phẩm "${payload.name}".`,
-        });
+        toast.success(`Updated product "${payload.name}" successfully.`);
       } else {
         await productService.createProduct(payload);
-        setFeedback({
-          type: "success",
-          text: `Đã thêm sản phẩm mới "${payload.name}".`,
-        });
+        toast.success(`Created new product "${payload.name}" successfully.`);
       }
 
       setIsProductModalOpen(false);
       setEditingProduct(null);
       await loadData(true);
     } catch {
-      setFeedback({
-        type: "error",
-        text: "Lỗi lưu sản phẩm. Vui lòng kiểm tra lại thông tin.",
-      });
+      toast.error("Failed to save product. Please check input values.");
     } finally {
       setIsSavingProduct(false);
     }
@@ -171,25 +131,12 @@ export function useAdminDashboard() {
 
   const handleDeleteProduct = async (product: Product) => {
     if (!product.slug) return;
-    if (
-      !window.confirm(`Xác nhận xóa sản phẩm "${product.name}" khỏi hệ thống?`)
-    ) {
-      return;
-    }
-
-    setFeedback(null);
     try {
       await productService.deleteProduct(product.slug);
-      setFeedback({
-        type: "success",
-        text: `Đã xóa sản phẩm "${product.name}".`,
-      });
+      toast.success(`Deleted product "${product.name}" successfully.`);
       await loadData(true);
     } catch {
-      setFeedback({
-        type: "error",
-        text: "Không thể xóa sản phẩm này.",
-      });
+      toast.error("Failed to delete product.");
     }
   };
 
@@ -218,8 +165,6 @@ export function useAdminDashboard() {
     products,
     isLoading,
     isRefreshing,
-    feedback,
-    setFeedback,
     isProductModalOpen,
     editingProduct,
     isSavingProduct,
@@ -233,4 +178,3 @@ export function useAdminDashboard() {
     handleCloseModal,
   };
 }
-

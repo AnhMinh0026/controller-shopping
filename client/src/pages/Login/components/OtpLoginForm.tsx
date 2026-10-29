@@ -82,7 +82,7 @@ export default function OtpLoginForm({
           htmlFor="otp-login-identifier"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          {otpChannel === "email" ? "Địa chỉ Email" : "Số Điện Thoại"}
+          {otpChannel === "email" ? "Email Address" : "Phone Number"}
         </label>
         <input
           id="otp-login-identifier"
@@ -112,7 +112,7 @@ export default function OtpLoginForm({
 
           <div className="mb-2 flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-widest text-gray-300">
-              Mã xác thực 6 số
+              6-Digit Verification Code
             </span>
             <button
               type="button"
@@ -122,7 +122,7 @@ export default function OtpLoginForm({
               }}
               className="text-[11px] font-semibold text-brand hover:underline"
             >
-              Đổi {otpChannel === "email" ? "Email" : "Số điện thoại"}
+              Change {otpChannel === "email" ? "Email" : "Phone Number"}
             </button>
           </div>
 
@@ -133,14 +133,14 @@ export default function OtpLoginForm({
           />
 
           <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
-            <span>Chưa nhận được mã?</span>
+            <span>Didn't receive the code?</span>
             <button
               type="button"
               disabled={cooldown > 0 || isSubmitting}
               onClick={() => void onRequestOtp()}
               className="font-semibold text-brand transition-opacity hover:underline disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {cooldown > 0 ? `Gửi lại sau ${cooldown}s` : "Gửi lại mã"}
+              {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
             </button>
           </div>
         </div>
@@ -152,10 +152,10 @@ export default function OtpLoginForm({
         className="w-full rounded-full border border-brand bg-brand py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-transparent hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting
-          ? "Đang xử lý..."
+          ? "Signing in..."
           : otpSent
-            ? "Xác Thực & Đăng Nhập"
-            : "Gửi Mã OTP"}
+            ? "Verify & Sign In"
+            : "Send OTP Code"}
       </button>
     </form>
   );

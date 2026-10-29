@@ -24,14 +24,14 @@ export default function PasswordLoginForm({
           htmlFor="login-identifier"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          Email hoặc Số Điện Thoại
+          Email or Phone Number
         </label>
         <input
           id="login-identifier"
           type="text"
           required
           autoComplete="username"
-          placeholder="you@example.com hoặc 0912345678"
+          placeholder="you@example.com or 0912345678"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
           className="mt-2 w-full rounded-xl border border-white/15 bg-black/70 px-4 py-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-brand focus:outline-none"
@@ -43,14 +43,14 @@ export default function PasswordLoginForm({
           htmlFor="login-password"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          Mật khẩu
+          Password
         </label>
         <input
           id="login-password"
           type="password"
           required
           autoComplete="current-password"
-          placeholder="Nhập mật khẩu của bạn"
+          placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="mt-2 w-full rounded-xl border border-white/15 bg-black/70 px-4 py-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-brand focus:outline-none"
@@ -62,7 +62,7 @@ export default function PasswordLoginForm({
         disabled={isSubmitting}
         className="w-full rounded-full border border-brand bg-brand py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-transparent hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isSubmitting ? "Đang xử lý..." : "Đăng Nhập"}
+        {isSubmitting ? "Signing in..." : "Sign In"}
       </button>
     </form>
   );
