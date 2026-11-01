@@ -34,7 +34,7 @@ export function setRefreshTokenCookie(res: Response, rawToken: string): void {
   res.cookie(REFRESH_TOKEN_COOKIE_NAME, rawToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "strict" : "lax",
+    sameSite: isProduction ? "none" : "lax",
     path: "/api/auth",
     maxAge: REFRESH_TOKEN_TTL_MS,
   });
@@ -46,7 +46,7 @@ export function clearRefreshTokenCookie(res: Response): void {
   res.clearCookie(REFRESH_TOKEN_COOKIE_NAME, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? "strict" : "lax",
+    sameSite: isProduction ? "none" : "lax",
     path: "/api/auth",
   });
 }

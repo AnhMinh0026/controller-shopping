@@ -1,10 +1,7 @@
 import type { FormEvent } from "react";
 import OtpCodeInput from "../../../components/common/OtpCodeInput";
-import ZaloOtpHelper from "../../../components/common/ZaloOtpHelper";
-import type { OtpChannel } from "../../../services/auth.service";
 
 interface SignUpFormProps {
-  channel: OtpChannel;
   name: string;
   setName: (value: string) => void;
   identifier: string;
@@ -16,17 +13,12 @@ interface SignUpFormProps {
   otpSent: boolean;
   setOtpSent: (sent: boolean) => void;
   cooldown: number;
-  zaloBotName: string | null;
-  zaloBotUsername: string | null;
-  zaloBotLink: string | null;
-  pushedToZalo: boolean;
   onRequestOtp: () => Promise<void>;
   onSubmit: (event: FormEvent) => Promise<void>;
   isSubmitting: boolean;
 }
 
 export default function SignUpForm({
-  channel,
   name,
   setName,
   identifier,
@@ -38,10 +30,6 @@ export default function SignUpForm({
   otpSent,
   setOtpSent,
   cooldown,
-  zaloBotName,
-  zaloBotUsername,
-  zaloBotLink,
-  pushedToZalo,
   onRequestOtp,
   onSubmit,
   isSubmitting,
@@ -69,20 +57,20 @@ export default function SignUpForm({
         />
       </div>
 
-      {/* Identifier: Email or Phone */}
+      {/* Email Address */}
       <div>
         <label
           htmlFor="signup-identifier"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          {channel === "email" ? "Email Address" : "Phone Number"}
+          Email Address
         </label>
         <input
           id="signup-identifier"
-          type={channel === "email" ? "email" : "tel"}
+          type="email"
           required
           disabled={otpSent}
-          placeholder={channel === "email" ? "you@example.com" : "0912345678"}
+          placeholder="you@example.com"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
           className="mt-2 w-full rounded-xl border border-white/15 bg-black/70 px-4 py-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-brand focus:outline-none disabled:opacity-60"
@@ -111,21 +99,12 @@ export default function SignUpForm({
         />
       </div>
 
-      {/* Step 2: OTP Verification Input & Zalo Helper */}
+      {/* Step 2: Email OTP Verification Input */}
       {otpSent && (
         <div className="pt-2">
-          {channel === "phone" && (
-            <ZaloOtpHelper
-              botName={zaloBotName}
-              botUsername={zaloBotUsername}
-              botLink={zaloBotLink}
-              pushedToZalo={pushedToZalo}
-            />
-          )}
-
           <div className="mb-2 flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-widest text-gray-300">
-              Enter 6-Digit OTP Code
+              Enter 6-Digit Email OTP Code
             </span>
             <button
               type="button"
@@ -173,4 +152,3 @@ export default function SignUpForm({
     </form>
   );
 }
-

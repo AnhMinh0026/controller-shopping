@@ -9,8 +9,6 @@ export default function LoginPage() {
   const {
     mode,
     setMode,
-    otpChannel,
-    setOtpChannel,
     identifier,
     setIdentifier,
     password,
@@ -22,10 +20,6 @@ export default function LoginPage() {
     cooldown,
     infoMessage,
     setInfoMessage,
-    zaloBotName,
-    zaloBotUsername,
-    zaloBotLink,
-    pushedToZalo,
     isSubmitting,
     error,
     handlePasswordSubmit,
@@ -49,11 +43,11 @@ export default function LoginPage() {
               WELCOME BACK
             </h1>
             <p className="mt-2 text-xs text-gray-400">
-              Sign in with password, one-time OTP code, or Google account.
+              Sign in with Email & Password, Email OTP code, or Google account.
             </p>
           </div>
 
-          {/* Mode Switcher: Password vs OTP */}
+          {/* Mode Switcher: Password vs Email OTP */}
           <div className="mt-6 grid grid-cols-2 rounded-full border border-white/10 bg-black p-1">
             <button
               type="button"
@@ -81,7 +75,7 @@ export default function LoginPage() {
                   : "text-gray-400 hover:text-white"
               }`}
             >
-              OTP Code
+              Email OTP
             </button>
           </div>
 
@@ -113,8 +107,6 @@ export default function LoginPage() {
             />
           ) : (
             <OtpLoginForm
-              otpChannel={otpChannel}
-              setOtpChannel={setOtpChannel}
               identifier={identifier}
               setIdentifier={setIdentifier}
               otpCode={otpCode}
@@ -122,10 +114,6 @@ export default function LoginPage() {
               otpSent={otpSent}
               setOtpSent={setOtpSent}
               cooldown={cooldown}
-              zaloBotName={zaloBotName}
-              zaloBotUsername={zaloBotUsername}
-              zaloBotLink={zaloBotLink}
-              pushedToZalo={pushedToZalo}
               onRequestOtp={handleRequestOtp}
               onSubmit={handleOtpSubmit}
               isSubmitting={isSubmitting}

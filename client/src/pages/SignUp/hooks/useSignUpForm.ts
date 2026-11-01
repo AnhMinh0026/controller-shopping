@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { OtpChannel } from "../../../services/auth.service";
 import { useAuthStore } from "../../../store/useAuthStore";
 
 export function useSignUpForm() {
@@ -14,7 +13,6 @@ export function useSignUpForm() {
   const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle);
   const clearError = useAuthStore((state) => state.clearError);
 
-  const [channel, setChannel] = useState<OtpChannel>("email");
   const [name, setName] = useState("");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -23,15 +21,9 @@ export function useSignUpForm() {
   const [cooldown, setCooldown] = useState(0);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
-  // Zalo Bot Delivery Info
-  const [zaloBotName, setZaloBotName] = useState<string | null>(null);
-  const [zaloBotUsername, setZaloBotUsername] = useState<string | null>(null);
-  const [zaloBotLink, setZaloBotLink] = useState<string | null>(null);
-  const [pushedToZalo, setPushedToZalo] = useState(false);
-
   useEffect(() => {
     clearError();
-  }, [clearError, channel]);
+  }, [clearError]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -51,7 +43,6 @@ export function useSignUpForm() {
     setInfoMessage(null);
     try {
       const response = await sendOtp({
-        channel,
         purpose: "register",
         identifier,
       });
@@ -59,10 +50,6 @@ export function useSignUpForm() {
       setOtpCode("");
       setCooldown(response.cooldownSeconds || 60);
       setInfoMessage(response.message);
-      setZaloBotName(response.zaloBotName || null);
-      setZaloBotUsername(response.zaloBotUsername || null);
-      setZaloBotLink(response.zaloBotLink || null);
-      setPushedToZalo(Boolean(response.pushedToZalo));
     } catch {
       // Error is caught and stored in useAuthStore
     }
@@ -80,7 +67,6 @@ export function useSignUpForm() {
     try {
       await register({
         name,
-        channel,
         identifier,
         password,
         otpCode,
@@ -102,8 +88,6 @@ export function useSignUpForm() {
   };
 
   return {
-    channel,
-    setChannel,
     name,
     setName,
     identifier,
@@ -116,11 +100,6 @@ export function useSignUpForm() {
     setOtpSent,
     cooldown,
     infoMessage,
-    setInfoMessage,
-    zaloBotName,
-    zaloBotUsername,
-    zaloBotLink,
-    pushedToZalo,
     isSubmitting,
     error,
     handleRequestOtp,
@@ -128,4 +107,3 @@ export function useSignUpForm() {
     handleGoogleCredential,
   };
 }
-

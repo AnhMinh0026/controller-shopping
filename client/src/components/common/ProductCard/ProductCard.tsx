@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Product } from "../../../services/product.service";
+import { useCartStore } from "../../../store/useCartStore";
 import PriceTag from "../PriceTag";
 
 interface ProductCardProps {
@@ -11,6 +12,7 @@ export default function ProductCard({
   product,
   onAddToCart,
 }: ProductCardProps) {
+  const addItem = useCartStore((state) => state.addItem);
   const isOutOfStock = product.inStock === false;
   const detailPath = `/products/${encodeURIComponent(product.slug || product.id)}`;
 
@@ -78,7 +80,13 @@ export default function ProductCard({
           <button
             type="button"
             disabled={isOutOfStock}
-            onClick={() => onAddToCart?.(product)}
+            onClick={() => {
+              if (onAddToCart) {
+                onAddToCart(product);
+              } else {
+                addItem(product, 1);
+              }
+            }}
             className="rounded-full border border-brand bg-transparent px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-brand transition-all duration-300 hover:bg-brand hover:text-white hover:shadow-[0_0_20px_rgb(var(--color-brand)/0.45)] disabled:cursor-not-allowed disabled:border-white/15 disabled:text-gray-500 disabled:hover:bg-transparent disabled:hover:shadow-none"
           >
             {isOutOfStock ? "Sold Out" : "Add to Cart"}

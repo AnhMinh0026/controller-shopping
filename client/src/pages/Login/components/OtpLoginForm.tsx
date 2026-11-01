@@ -1,11 +1,7 @@
 import type { FormEvent } from "react";
 import OtpCodeInput from "../../../components/common/OtpCodeInput";
-import ZaloOtpHelper from "../../../components/common/ZaloOtpHelper";
-import type { OtpChannel } from "../../../services/auth.service";
 
 interface OtpLoginFormProps {
-  otpChannel: OtpChannel;
-  setOtpChannel: (channel: OtpChannel) => void;
   identifier: string;
   setIdentifier: (value: string) => void;
   otpCode: string;
@@ -13,18 +9,12 @@ interface OtpLoginFormProps {
   otpSent: boolean;
   setOtpSent: (sent: boolean) => void;
   cooldown: number;
-  zaloBotName: string | null;
-  zaloBotUsername: string | null;
-  zaloBotLink: string | null;
-  pushedToZalo: boolean;
   onRequestOtp: () => Promise<void>;
   onSubmit: (event: FormEvent) => Promise<void>;
   isSubmitting: boolean;
 }
 
 export default function OtpLoginForm({
-  otpChannel,
-  setOtpChannel,
   identifier,
   setIdentifier,
   otpCode,
@@ -32,87 +22,38 @@ export default function OtpLoginForm({
   otpSent,
   setOtpSent,
   cooldown,
-  zaloBotName,
-  zaloBotUsername,
-  zaloBotLink,
-  pushedToZalo,
   onRequestOtp,
   onSubmit,
   isSubmitting,
 }: OtpLoginFormProps) {
   return (
     <form onSubmit={(e) => void onSubmit(e)} className="mt-6 space-y-4">
-      {/* Channel Selector: Email vs Phone */}
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => {
-            setOtpChannel("email");
-            setOtpSent(false);
-            setOtpCode("");
-          }}
-          className={`flex-1 rounded-xl border py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
-            otpChannel === "email"
-              ? "border-brand bg-brand/15 text-white"
-              : "border-white/10 text-gray-400 hover:text-white"
-          }`}
-        >
-          Email OTP
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setOtpChannel("phone");
-            setOtpSent(false);
-            setOtpCode("");
-          }}
-          className={`flex-1 rounded-xl border py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
-            otpChannel === "phone"
-              ? "border-brand bg-brand/15 text-white"
-              : "border-white/10 text-gray-400 hover:text-white"
-          }`}
-        >
-          Phone OTP (Zalo)
-        </button>
-      </div>
-
-      {/* Input Identifier */}
+      {/* Input Email */}
       <div>
         <label
           htmlFor="otp-login-identifier"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          {otpChannel === "email" ? "Email Address" : "Phone Number"}
+          Email Address
         </label>
         <input
           id="otp-login-identifier"
-          type={otpChannel === "email" ? "email" : "tel"}
+          type="email"
           required
           disabled={otpSent}
-          placeholder={
-            otpChannel === "email" ? "you@example.com" : "0912345678"
-          }
+          placeholder="you@example.com"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
           className="mt-2 w-full rounded-xl border border-white/15 bg-black/70 px-4 py-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-brand focus:outline-none disabled:opacity-60"
         />
       </div>
 
-      {/* Step 2: Verification Code Input & Zalo Helper */}
+      {/* Step 2: Verification Code Input */}
       {otpSent && (
         <div>
-          {otpChannel === "phone" && (
-            <ZaloOtpHelper
-              botName={zaloBotName}
-              botUsername={zaloBotUsername}
-              botLink={zaloBotLink}
-              pushedToZalo={pushedToZalo}
-            />
-          )}
-
           <div className="mb-2 flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-widest text-gray-300">
-              6-Digit Verification Code
+              6-Digit Email Verification Code
             </span>
             <button
               type="button"
@@ -122,7 +63,7 @@ export default function OtpLoginForm({
               }}
               className="text-[11px] font-semibold text-brand hover:underline"
             >
-              Change {otpChannel === "email" ? "Email" : "Phone Number"}
+              Change Email
             </button>
           </div>
 
@@ -155,9 +96,8 @@ export default function OtpLoginForm({
           ? "Signing in..."
           : otpSent
             ? "Verify & Sign In"
-            : "Send OTP Code"}
+            : "Send Email OTP"}
       </button>
     </form>
   );
 }
-

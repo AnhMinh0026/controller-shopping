@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export type OtpChannel = "email" | "phone";
+export type OtpChannel = "email";
 export type OtpPurpose = "register" | "login" | "reset_password";
 
 export interface IOtpVerification extends Document {
@@ -8,8 +8,6 @@ export interface IOtpVerification extends Document {
   channel: OtpChannel;
   purpose: OtpPurpose;
   otpHash: string;
-  botToken?: string;
-  encryptedOtp?: string;
   attempts: number;
   maxAttempts: number;
   resendAvailableAt: Date;
@@ -28,7 +26,8 @@ const otpVerificationSchema = new Schema<IOtpVerification>(
     },
     channel: {
       type: String,
-      enum: ["email", "phone"],
+      enum: ["email"],
+      default: "email",
       required: true,
     },
     purpose: {
@@ -39,14 +38,6 @@ const otpVerificationSchema = new Schema<IOtpVerification>(
     otpHash: {
       type: String,
       required: true,
-    },
-    botToken: {
-      type: String,
-      index: true,
-      sparse: true,
-    },
-    encryptedOtp: {
-      type: String,
     },
     attempts: {
       type: Number,

@@ -5,8 +5,8 @@ import express from "express";
 import { connectDB } from "./config/db";
 import adminRoutes from "./routes/adminRoutes";
 import authRoutes from "./routes/authRoutes";
+import orderRoutes from "./routes/orderRoutes";
 import productRoutes from "./routes/productRoutes";
-import { initZaloOtpBot } from "./services/zaloBot.service";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -14,11 +14,11 @@ dotenv.config();
 // Connect to MongoDB database
 connectDB();
 
-// Start Zalo OTP Bot long-polling listener (if ZALO_BOT_TOKEN is set)
-void initZaloOtpBot();
-
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Trust first proxy (required on Render / Railway / Heroku for express-rate-limit & secure cookies)
+app.set("trust proxy", 1);
 
 const configuredOrigins = (process.env.CLIENT_URL || "")
   .split(",")
@@ -53,6 +53,7 @@ app.use(express.json()); // Parse incoming JSON payloads
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Test API endpoint
 app.get("/", (req, res) => {

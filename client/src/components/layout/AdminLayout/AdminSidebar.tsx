@@ -50,10 +50,10 @@ export default function AdminSidebar({
     },
     {
       id: "orders" as const,
-      label: "Orders",
+      label: "Orders & SePay",
       icon: ShoppingBag,
-      badge: "Coming Soon",
-      disabled: true,
+      badge: "SePay",
+      disabled: false,
     },
   ];
 

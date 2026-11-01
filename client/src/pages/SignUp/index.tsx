@@ -6,8 +6,6 @@ import { useSignUpForm } from "./hooks/useSignUpForm";
 
 export default function SignUpPage() {
   const {
-    channel,
-    setChannel,
     name,
     setName,
     identifier,
@@ -20,11 +18,6 @@ export default function SignUpPage() {
     setOtpSent,
     cooldown,
     infoMessage,
-    setInfoMessage,
-    zaloBotName,
-    zaloBotUsername,
-    zaloBotLink,
-    pushedToZalo,
     isSubmitting,
     error,
     handleRequestOtp,
@@ -47,44 +40,8 @@ export default function SignUpPage() {
               CREATE ACCOUNT
             </h1>
             <p className="mt-2 text-xs text-gray-400">
-              Sign up with Email or Phone Number (Zalo), or continue with Google.
+              Sign up with Email verification or continue with Google.
             </p>
-          </div>
-
-          {/* Channel Selector: Email vs Phone */}
-          <div className="mt-6 grid grid-cols-2 rounded-full border border-white/10 bg-black p-1">
-            <button
-              type="button"
-              onClick={() => {
-                setChannel("email");
-                setOtpSent(false);
-                setOtpCode("");
-                setInfoMessage(null);
-              }}
-              className={`rounded-full py-2 text-xs font-bold uppercase tracking-widest transition-all ${
-                channel === "email"
-                  ? "bg-brand text-white shadow"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Email
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setChannel("phone");
-                setOtpSent(false);
-                setOtpCode("");
-                setInfoMessage(null);
-              }}
-              className={`rounded-full py-2 text-xs font-bold uppercase tracking-widest transition-all ${
-                channel === "phone"
-                  ? "bg-brand text-white shadow"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Phone Number
-            </button>
           </div>
 
           {/* Alerts */}
@@ -105,7 +62,6 @@ export default function SignUpPage() {
 
           {/* Registration Form Component */}
           <SignUpForm
-            channel={channel}
             name={name}
             setName={setName}
             identifier={identifier}
@@ -117,10 +73,6 @@ export default function SignUpPage() {
             otpSent={otpSent}
             setOtpSent={setOtpSent}
             cooldown={cooldown}
-            zaloBotName={zaloBotName}
-            zaloBotUsername={zaloBotUsername}
-            zaloBotLink={zaloBotLink}
-            pushedToZalo={pushedToZalo}
             onRequestOtp={handleRequestOtp}
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}

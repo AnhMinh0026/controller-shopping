@@ -82,6 +82,7 @@ export default function ProductDetailPage() {
               <ProductInfo product={product} isOutOfStock={isOutOfStock} />
 
               <ProductPurchaseBar
+                product={product}
                 quantity={quantity}
                 maxStock={maxStock}
                 isOutOfStock={isOutOfStock}

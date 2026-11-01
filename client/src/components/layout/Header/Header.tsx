@@ -1,5 +1,7 @@
+import { ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
+import { useCartStore } from "../../../store/useCartStore";
 import HeaderAuthActions from "./components/HeaderAuthActions";
 import MobileNavMenu from "./components/MobileNavMenu";
 import { useHeaderState } from "./hooks/useHeaderState";
@@ -22,6 +24,11 @@ export default function Header() {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
+  const cartItems = useCartStore((state) => state.items);
+  const totalCartItems = cartItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
 
   return (
     <header
@@ -61,8 +68,22 @@ export default function Header() {
           </ul>
         </nav>
 
-        {/* Auth Actions & Mobile Hamburger */}
+        {/* Auth Actions, Cart & Mobile Hamburger */}
         <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+          <Link
+            to="/cart"
+            aria-label="Shopping cart"
+            className="relative inline-flex h-9 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 text-xs font-bold uppercase tracking-wider text-white/90 transition-all hover:border-brand hover:text-brand"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            <span className="hidden lg:inline">Cart</span>
+            {totalCartItems > 0 && (
+              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand px-1.5 text-[10px] font-black text-white">
+                {totalCartItems}
+              </span>
+            )}
+          </Link>
+
           <HeaderAuthActions
             isAuthenticated={isAuthenticated}
             user={user}

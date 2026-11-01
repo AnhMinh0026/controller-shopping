@@ -3,15 +3,12 @@ import type { Request, Response } from "express";
 import { OAuth2Client } from "google-auth-library";
 import type { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import OtpVerification, {
-  type OtpChannel,
   type OtpPurpose,
 } from "../models/OtpVerification";
 import RefreshToken from "../models/RefreshToken";
 import User, { type IUser } from "../models/User";
-import { sendEmailOtp, sendPhoneOtp } from "../services/notification.service";
+import { sendEmailOtp } from "../services/notification.service";
 import {
-  encryptOtpForBot,
-  generateBotDeepLinkToken,
   generateRefreshTokenPair,
   generateSecureOtp,
   generateTokenFamilyId,
@@ -34,6 +31,7 @@ import {
   loginWithPasswordSchema,
   registerWithOtpSchema,
   sendOtpSchema,
+  updateProfileSchema,
 } from "../validators/auth.validator";
 
 const BCRYPT_ROUNDS = 12;
@@ -51,6 +49,7 @@ function sanitizeUser(user: IUser) {
     name: user.name,
     email: user.email,
     phone: user.phone,
+    address: user.address,
     avatar: user.avatar,
     role: user.role,
     isEmailVerified: user.isEmailVerified,
@@ -58,13 +57,9 @@ function sanitizeUser(user: IUser) {
   };
 }
 
-function normalizeIdentifier(channel: OtpChannel, raw: string): string {
-  return channel === "email" ? normalizeEmail(raw) : normalizePhone(raw);
-}
-
 /**
- * Automatically promotes a user to "admin" if their email or phone is listed
- * in `ADMIN_EMAIL` or `ADMIN_PHONE` environment variables.
+ * Automatically promotes a user to "admin" if their email is listed
+ * in `ADMIN_EMAIL` environment variable.
  */
 async function syncConfiguredAdminRole(user: IUser): Promise<void> {
   if (user.role === "admin") return;
@@ -74,20 +69,11 @@ async function syncConfiguredAdminRole(user: IUser): Promise<void> {
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
 
-  const adminPhones = (process.env.ADMIN_PHONE || "")
-    .split(",")
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map((p) => normalizePhone(p));
-
   const matchesEmail = Boolean(
     user.email && adminEmails.includes(user.email.toLowerCase()),
   );
-  const matchesPhone = Boolean(
-    user.phone && adminPhones.includes(normalizePhone(user.phone)),
-  );
 
-  if (matchesEmail || matchesPhone) {
+  if (matchesEmail) {
     user.role = "admin";
     await user.save();
   }
@@ -203,21 +189,16 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { channel, purpose } = parsed.data;
-    const identifier = normalizeIdentifier(channel, parsed.data.identifier);
+    const { purpose } = parsed.data;
+    const identifier = normalizeEmail(parsed.data.identifier);
 
     // Check existing user according to purpose
-    const query =
-      channel === "email" ? { email: identifier } : { phone: identifier };
-    const existingUser = await User.findOne(query);
+    const existingUser = await User.findOne({ email: identifier });
 
     if (purpose === "register" && existingUser) {
       res.status(409).json({
         success: false,
-        message:
-          channel === "email"
-            ? "An account with this email already exists."
-            : "An account with this phone number already exists.",
+        message: "An account with this email already exists.",
       });
       return;
     }
@@ -225,7 +206,7 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
     if (purpose === "login" && !existingUser) {
       res.status(404).json({
         success: false,
-        message: "No account found with this identifier.",
+        message: "No account found with this email address.",
       });
       return;
     }
@@ -249,21 +230,15 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
 
     const otpCode = generateSecureOtp();
     const otpHash = hashOtp(identifier, purpose, otpCode);
-    const botToken =
-      channel === "phone" ? generateBotDeepLinkToken() : undefined;
-    const encryptedOtp =
-      channel === "phone" ? encryptOtpForBot(otpCode) : undefined;
     const now = Date.now();
 
     await OtpVerification.findOneAndUpdate(
       { identifier, purpose },
       {
         identifier,
-        channel,
+        channel: "email",
         purpose,
         otpHash,
-        ...(botToken ? { botToken } : {}),
-        ...(encryptedOtp ? { encryptedOtp } : {}),
         attempts: 0,
         maxAttempts: MAX_OTP_ATTEMPTS,
         resendAvailableAt: new Date(now + OTP_RESEND_COOLDOWN_MS),
@@ -272,39 +247,13 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
       { upsert: true, returnDocument: "after" },
     );
 
-    let responseMessage = "Verification code has been sent to your email.";
-    let zaloBotName: string | null | undefined;
-    let zaloBotUsername: string | null | undefined;
-    let zaloBotLink: string | null | undefined;
-    let pushedToZalo = false;
-
-    if (channel === "email") {
-      await sendEmailOtp(identifier, otpCode, purpose);
-    } else {
-      const phoneResult = await sendPhoneOtp(identifier, otpCode, purpose);
-      zaloBotName = phoneResult.zaloBotName;
-      zaloBotUsername = phoneResult.zaloBotUsername;
-      zaloBotLink = phoneResult.zaloBotLink;
-      pushedToZalo = Boolean(phoneResult.pushedToZalo);
-
-      if (phoneResult.provider === "zalo_bot") {
-        responseMessage = pushedToZalo
-          ? "A 6-digit OTP code has been delivered directly to your Zalo chat!"
-          : "Verification code is ready! Scan the QR code or click 'Open Zalo Bot Chat' below and send 'otp' to receive your code.";
-      } else {
-        responseMessage = "Verification code has been sent to your phone.";
-      }
-    }
+    await sendEmailOtp(identifier, otpCode, purpose);
 
     res.status(200).json({
       success: true,
-      message: responseMessage,
+      message: "Verification code has been sent to your email.",
       cooldownSeconds: OTP_RESEND_COOLDOWN_MS / 1000,
       expiresInSeconds: OTP_TTL_MS / 1000,
-      ...(zaloBotName ? { zaloBotName } : {}),
-      ...(zaloBotUsername ? { zaloBotUsername } : {}),
-      ...(zaloBotLink ? { zaloBotLink } : {}),
-      ...(channel === "phone" ? { pushedToZalo } : {}),
     });
   } catch (error) {
     const message =
@@ -328,8 +277,8 @@ export const registerWithOtp = async (
       return;
     }
 
-    const { name, channel, otpCode, password } = parsed.data;
-    const identifier = normalizeIdentifier(channel, parsed.data.identifier);
+    const { name, otpCode, password } = parsed.data;
+    const identifier = normalizeEmail(parsed.data.identifier);
 
     // 1. Verify OTP first
     const otpResult = await verifyAndConsumeOtp(
@@ -345,9 +294,7 @@ export const registerWithOtp = async (
     }
 
     // 2. Ensure account was not created concurrently
-    const query =
-      channel === "email" ? { email: identifier } : { phone: identifier };
-    const existingUser = await User.findOne(query);
+    const existingUser = await User.findOne({ email: identifier });
     if (existingUser) {
       res.status(409).json({
         success: false,
@@ -360,9 +307,8 @@ export const registerWithOtp = async (
     const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
     const user = await User.create({
       name,
-      ...(channel === "email"
-        ? { email: identifier, isEmailVerified: true }
-        : { phone: identifier, isPhoneVerified: true }),
+      email: identifier,
+      isEmailVerified: true,
       passwordHash,
       lastLoginAt: new Date(),
     });
@@ -396,20 +342,16 @@ export const loginWithPassword = async (
       return;
     }
 
-    const rawIdentifier = parsed.data.identifier;
-    const isEmail = rawIdentifier.includes("@");
-    const identifier = isEmail
-      ? normalizeEmail(rawIdentifier)
-      : normalizePhone(rawIdentifier);
+    const identifier = normalizeEmail(parsed.data.identifier);
 
-    const user = await User.findOne(
-      isEmail ? { email: identifier } : { phone: identifier },
-    ).select("+passwordHash");
+    const user = await User.findOne({ email: identifier }).select(
+      "+passwordHash",
+    );
 
     if (!user || !user.passwordHash) {
       res.status(401).json({
         success: false,
-        message: "Invalid credentials.",
+        message: "Invalid email or password.",
       });
       return;
     }
@@ -441,7 +383,7 @@ export const loginWithPassword = async (
 
       res.status(401).json({
         success: false,
-        message: "Invalid credentials.",
+        message: "Invalid email or password.",
       });
       return;
     }
@@ -479,8 +421,8 @@ export const loginWithOtp = async (
       return;
     }
 
-    const { channel, otpCode } = parsed.data;
-    const identifier = normalizeIdentifier(channel, parsed.data.identifier);
+    const { otpCode } = parsed.data;
+    const identifier = normalizeEmail(parsed.data.identifier);
 
     const otpResult = await verifyAndConsumeOtp(identifier, "login", otpCode);
     if (!otpResult.valid) {
@@ -490,9 +432,7 @@ export const loginWithOtp = async (
       return;
     }
 
-    const user = await User.findOne(
-      channel === "email" ? { email: identifier } : { phone: identifier },
-    );
+    const user = await User.findOne({ email: identifier });
 
     if (!user) {
       res.status(404).json({
@@ -505,8 +445,7 @@ export const loginWithOtp = async (
     user.failedLoginAttempts = 0;
     user.lockUntil = null;
     user.lastLoginAt = new Date();
-    if (channel === "email") user.isEmailVerified = true;
-    if (channel === "phone") user.isPhoneVerified = true;
+    user.isEmailVerified = true;
     await user.save();
 
     const session = await issueSessionTokens(user, req, res);
@@ -773,3 +712,71 @@ export const getCurrentUser = async (
     res.status(500).json({ success: false, message });
   }
 };
+
+// [PUT] /api/auth/profile
+export const updateProfile = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const parsed = updateProfileSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({
+        success: false,
+        message: parsed.error.issues[0]?.message || "Invalid profile data",
+      });
+      return;
+    }
+
+    const user = await User.findById(req.user?.userId);
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+      return;
+    }
+
+    const { name, phone, address } = parsed.data;
+
+    if (typeof name === "string" && name.trim().length > 0) {
+      user.name = name.trim();
+    }
+
+    if (typeof phone === "string") {
+      const trimmedPhone = phone.trim();
+      if (trimmedPhone.length > 0) {
+        const normalizedPhone = normalizePhone(trimmedPhone);
+        const existingPhoneUser = await User.findOne({
+          phone: normalizedPhone,
+          _id: { $ne: user._id },
+        });
+        if (existingPhoneUser) {
+          res.status(409).json({
+            success: false,
+            message: "This phone number is already linked to another account",
+          });
+          return;
+        }
+        user.phone = normalizedPhone;
+      }
+    }
+
+    if (typeof address === "string") {
+      user.address = address.trim();
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: sanitizeUser(user),
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to update profile";
+    res.status(500).json({ success: false, message });
+  }
+};
+

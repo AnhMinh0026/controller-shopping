@@ -6,6 +6,7 @@ export interface IUser extends Document {
   name: string;
   email?: string;
   phone?: string;
+  address?: string;
   googleId?: string;
   avatar?: string;
   passwordHash?: string;
@@ -39,6 +40,11 @@ const userSchema = new Schema<IUser>(
       unique: true,
       sparse: true,
       trim: true,
+    },
+    address: {
+      type: String,
+      trim: true,
+      maxlength: [500, "Address cannot exceed 500 characters"],
     },
     googleId: {
       type: String,

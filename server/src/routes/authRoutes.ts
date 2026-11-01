@@ -9,6 +9,7 @@ import {
   refreshAccessToken,
   registerWithOtp,
   sendOtp,
+  updateProfile,
 } from "../controllers/authController";
 import { requireAuth } from "../middlewares/auth.middleware";
 import {
@@ -33,6 +34,7 @@ router.post("/refresh", refreshAccessToken);
 router.post("/logout", logout);
 router.post("/logout-all", requireAuth, logoutAllDevices);
 router.get("/me", requireAuth, getCurrentUser);
+router.put("/profile", requireAuth, updateProfile);
 
 export default router;
 

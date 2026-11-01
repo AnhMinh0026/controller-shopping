@@ -23,7 +23,11 @@ export default function HeaderAuthActions({
             Admin Panel
           </Link>
         )}
-        <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+        <Link
+          to="/profile"
+          title="My Profile & Orders"
+          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 transition-colors hover:border-brand/60 hover:bg-white/10"
+        >
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-[11px] font-bold uppercase text-white">
             {user.name.charAt(0)}
           </span>
@@ -39,7 +43,7 @@ export default function HeaderAuthActions({
           >
             {user.role}
           </span>
-        </div>
+        </Link>
         <button
           type="button"
           onClick={onLogout}

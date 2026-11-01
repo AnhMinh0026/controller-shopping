@@ -8,6 +8,7 @@ import {
   type RegisterWithOtpPayload,
   type SendOtpPayload,
   type SendOtpResponse,
+  type UpdateProfilePayload,
 } from "../services/auth.service";
 import { bindAuthTokenListeners, setAccessToken } from "../utils/tokenManager";
 
@@ -25,6 +26,8 @@ interface AuthState {
   loginWithPassword: (payload: LoginWithPasswordPayload) => Promise<AuthUser>;
   loginWithOtp: (payload: LoginWithOtpPayload) => Promise<AuthUser>;
   loginWithGoogle: (idToken: string) => Promise<AuthUser>;
+  updateProfile: (payload: UpdateProfilePayload) => Promise<AuthUser>;
+  refreshUser: () => Promise<void>;
   logout: () => Promise<void>;
   logoutAll: () => Promise<void>;
   clearError: () => void;
@@ -187,6 +190,35 @@ export const useAuthStore = create<AuthState>((set) => {
         );
         set({ isSubmitting: false, error: message });
         throw new Error(message);
+      }
+    },
+
+    updateProfile: async (payload) => {
+      set({ isSubmitting: true, error: null });
+      try {
+        const result = await authService.updateProfile(payload);
+        set({
+          user: result.user,
+          isSubmitting: false,
+          error: null,
+        });
+        return result.user;
+      } catch (error: unknown) {
+        const message = extractErrorMessage(
+          error,
+          "Failed to update profile.",
+        );
+        set({ isSubmitting: false, error: message });
+        throw new Error(message);
+      }
+    },
+
+    refreshUser: async () => {
+      try {
+        const result = await authService.getCurrentUser();
+        set({ user: result.user });
+      } catch {
+        // Ignore silent refresh error
       }
     },
 

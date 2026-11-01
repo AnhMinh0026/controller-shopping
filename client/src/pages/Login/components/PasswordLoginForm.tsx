@@ -24,14 +24,14 @@ export default function PasswordLoginForm({
           htmlFor="login-identifier"
           className="block text-[11px] font-bold uppercase tracking-widest text-gray-300"
         >
-          Email or Phone Number
+          Email Address
         </label>
         <input
           id="login-identifier"
-          type="text"
+          type="email"
           required
-          autoComplete="username"
-          placeholder="you@example.com or 0912345678"
+          autoComplete="email"
+          placeholder="you@example.com"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
           className="mt-2 w-full rounded-xl border border-white/15 bg-black/70 px-4 py-3 text-sm text-white placeholder-gray-500 transition-colors focus:border-brand focus:outline-none"
@@ -67,4 +67,3 @@ export default function PasswordLoginForm({
     </form>
   );
 }
-

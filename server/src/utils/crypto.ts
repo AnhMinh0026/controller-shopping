@@ -6,60 +6,11 @@ const getOtpSecret = (): string =>
   process.env.JWT_ACCESS_SECRET ||
   "flydigi-enterprise-otp-secret-key-2026";
 
-const getAesKey = (): Buffer =>
-  crypto.createHash("sha256").update(getOtpSecret()).digest();
-
 /**
  * Generates a cryptographically secure 6-digit numeric OTP code.
  */
 export function generateSecureOtp(): string {
   return crypto.randomInt(100000, 1000000).toString();
-}
-
-/**
- * Generates a short random token for the Bot deep link (?start=otp_<token>).
- */
-export function generateBotDeepLinkToken(): string {
-  return crypto.randomBytes(12).toString("hex");
-}
-
-/**
- * Encrypts the 6-digit OTP using AES-256-GCM so the Bot can deliver it when the
- * user opens the deep link, without ever storing plaintext OTPs in MongoDB.
- */
-export function encryptOtpForBot(otpCode: string): string {
-  const iv = crypto.randomBytes(12);
-  const cipher = crypto.createCipheriv("aes-256-gcm", getAesKey(), iv);
-  const encrypted = Buffer.concat([
-    cipher.update(otpCode, "utf8"),
-    cipher.final(),
-  ]);
-  const authTag = cipher.getAuthTag();
-  return `${iv.toString("hex")}:${authTag.toString("hex")}:${encrypted.toString("hex")}`;
-}
-
-/**
- * Decrypts an AES-256-GCM encrypted OTP for Bot delivery.
- */
-export function decryptOtpForBot(payload: string): string | null {
-  try {
-    const [ivHex, tagHex, dataHex] = payload.split(":");
-    if (!ivHex || !tagHex || !dataHex) return null;
-
-    const decipher = crypto.createDecipheriv(
-      "aes-256-gcm",
-      getAesKey(),
-      Buffer.from(ivHex, "hex"),
-    );
-    decipher.setAuthTag(Buffer.from(tagHex, "hex"));
-    const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(dataHex, "hex")),
-      decipher.final(),
-    ]);
-    return decrypted.toString("utf8");
-  } catch {
-    return null;
-  }
 }
 
 /**

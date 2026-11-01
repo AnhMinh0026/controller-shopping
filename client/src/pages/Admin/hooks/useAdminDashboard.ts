@@ -8,6 +8,12 @@ import {
 } from "../../../services/admin.service";
 import type { UserRole } from "../../../services/auth.service";
 import {
+  orderService,
+  type OrderRecord,
+  type OrderStatus,
+  type SepayConfigInfo,
+} from "../../../services/order.service";
+import {
   productService,
   type Product,
   type UpsertProductPayload,
@@ -20,8 +26,12 @@ export function useAdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [users, setUsers] = useState<AdminUserItem[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [sepayInfo, setSepayInfo] = useState<SepayConfigInfo | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isSyncingSepay, setIsSyncingSepay] = useState(false);
 
   // Modal State for Add / Edit Product
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -31,14 +41,18 @@ export function useAdminDashboard() {
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setIsRefreshing(true);
     try {
-      const [statsData, usersData, productsData] = await Promise.all([
-        adminService.getAdminStats(),
-        adminService.getAllUsers(),
-        productService.getProducts(1, 100),
-      ]);
+      const [statsData, usersData, productsData, ordersResult] =
+        await Promise.all([
+          adminService.getAdminStats(),
+          adminService.getAllUsers(),
+          productService.getProducts(1, 100),
+          orderService.getAllOrdersAdmin(),
+        ]);
       setStats(statsData);
       setUsers(usersData);
       setProducts(productsData.data);
+      setOrders(ordersResult.orders);
+      setSepayInfo(ordersResult.sepayInfo);
       if (!isSilent) {
         toast.success("Synchronized latest system data successfully.");
       }
@@ -56,12 +70,15 @@ export function useAdminDashboard() {
       adminService.getAdminStats(),
       adminService.getAllUsers(),
       productService.getProducts(1, 100),
+      orderService.getAllOrdersAdmin(),
     ])
-      .then(([statsData, usersData, productsData]) => {
+      .then(([statsData, usersData, productsData, ordersResult]) => {
         if (!isMounted) return;
         setStats(statsData);
         setUsers(usersData);
         setProducts(productsData.data);
+        setOrders(ordersResult.orders);
+        setSepayInfo(ordersResult.sepayInfo);
       })
       .catch(() => {
         if (!isMounted) return;
@@ -140,6 +157,73 @@ export function useAdminDashboard() {
     }
   };
 
+  const handleSyncSepay = async () => {
+    setIsSyncingSepay(true);
+    try {
+      const res = await orderService.syncSepayOrdersAdmin();
+      toast.success(res.message);
+      await loadData(true);
+    } catch {
+      toast.error("Failed to sync transactions with SePay.");
+    } finally {
+      setIsSyncingSepay(false);
+    }
+  };
+
+  const handleSimulateSepay = async (order: OrderRecord) => {
+    try {
+      const updated = await orderService.simulateSepayPaymentAdmin(order.id);
+      setOrders((prev) =>
+        prev.map((item) => (item.id === updated.id ? updated : item)),
+      );
+      toast.success(
+        `SePay transaction verified for Order #${order.orderCode}! Ready to ship.`,
+      );
+    } catch {
+      toast.error("Failed to verify SePay payment.");
+    }
+  };
+
+  const handleUpdateOrderStatus = async (
+    order: OrderRecord,
+    nextStatus: OrderStatus,
+    extra?: {
+      shippingCarrier?: string;
+      trackingNumber?: string;
+      cancelReason?: string;
+    },
+  ) => {
+    try {
+      const updated = await orderService.updateOrderStatusAdmin(order.id, {
+        orderStatus: nextStatus,
+        ...extra,
+      });
+      setOrders((prev) =>
+        prev.map((item) => (item.id === updated.id ? updated : item)),
+      );
+      if (nextStatus === "processing") {
+        toast.success(
+          `Confirmed COD Order #${order.orderCode}! Moved to "To Ship".`,
+        );
+      } else if (nextStatus === "shipping") {
+        toast.success(
+          `Order #${order.orderCode} handed over to ${updated.shippingCarrier || "carrier"} (${updated.trackingNumber || ""})!`,
+        );
+      } else if (nextStatus === "delivered") {
+        toast.success(
+          `Order #${order.orderCode} delivered & payment completed!`,
+        );
+      } else if (nextStatus === "cancelled") {
+        toast.info(`Order #${order.orderCode} cancelled & stock restored.`);
+        await loadData(true);
+      } else {
+        toast.success(`Order #${order.orderCode} status updated.`);
+      }
+    } catch {
+      toast.error("Failed to update order status.");
+    }
+  };
+
   const handleOpenAddModal = () => {
     setEditingProduct(null);
     setIsProductModalOpen(true);
@@ -163,8 +247,11 @@ export function useAdminDashboard() {
     stats,
     users,
     products,
+    orders,
+    sepayInfo,
     isLoading,
     isRefreshing,
+    isSyncingSepay,
     isProductModalOpen,
     editingProduct,
     isSavingProduct,
@@ -173,6 +260,9 @@ export function useAdminDashboard() {
     handleDeleteUser,
     handleSaveProduct,
     handleDeleteProduct,
+    handleSyncSepay,
+    handleSimulateSepay,
+    handleUpdateOrderStatus,
     handleOpenAddModal,
     handleOpenEditModal,
     handleCloseModal,

@@ -1,6 +1,5 @@
 import axiosClient from "../utils/axiosClient";
 
-export type OtpChannel = "email" | "phone";
 export type OtpPurpose = "register" | "login" | "reset_password";
 export type UserRole = "customer" | "admin";
 
@@ -9,10 +8,17 @@ export interface AuthUser {
   name: string;
   email?: string;
   phone?: string;
+  address?: string;
   avatar?: string;
   role: UserRole;
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
+}
+
+export interface UpdateProfilePayload {
+  name?: string;
+  phone?: string;
+  address?: string;
 }
 
 export interface AuthSessionResponse {
@@ -22,7 +28,6 @@ export interface AuthSessionResponse {
 }
 
 export interface SendOtpPayload {
-  channel: OtpChannel;
   purpose: OtpPurpose;
   identifier: string;
 }
@@ -32,15 +37,10 @@ export interface SendOtpResponse {
   message: string;
   cooldownSeconds: number;
   expiresInSeconds: number;
-  zaloBotName?: string;
-  zaloBotUsername?: string;
-  zaloBotLink?: string;
-  pushedToZalo?: boolean;
 }
 
 export interface RegisterWithOtpPayload {
   name: string;
-  channel: OtpChannel;
   identifier: string;
   otpCode: string;
   password: string;
@@ -52,7 +52,6 @@ export interface LoginWithPasswordPayload {
 }
 
 export interface LoginWithOtpPayload {
-  channel: OtpChannel;
   identifier: string;
   otpCode: string;
 }
@@ -130,6 +129,19 @@ export async function logoutAllSessions(): Promise<void> {
   await axiosClient.post("/auth/logout-all");
 }
 
+export async function updateProfile(payload: UpdateProfilePayload): Promise<{
+  success: boolean;
+  message: string;
+  user: AuthUser;
+}> {
+  const response = await axiosClient.put<{
+    success: boolean;
+    message: string;
+    user: AuthUser;
+  }>("/auth/profile", payload);
+  return response.data;
+}
+
 export const authService = {
   sendOtp,
   registerWithOtp,
@@ -140,5 +152,6 @@ export const authService = {
   getCurrentUser,
   logoutSession,
   logoutAllSessions,
+  updateProfile,
 };
 

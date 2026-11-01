@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import type { OtpChannel } from "../../../services/auth.service";
 import { useAuthStore } from "../../../store/useAuthStore";
 
 export type LoginMode = "password" | "otp";
@@ -18,7 +17,6 @@ export function useLoginForm() {
   const clearError = useAuthStore((state) => state.clearError);
 
   const [mode, setMode] = useState<LoginMode>("password");
-  const [otpChannel, setOtpChannel] = useState<OtpChannel>("email");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [otpCode, setOtpCode] = useState("");
@@ -26,15 +24,9 @@ export function useLoginForm() {
   const [cooldown, setCooldown] = useState(0);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
-  // Zalo Bot Delivery Info
-  const [zaloBotName, setZaloBotName] = useState<string | null>(null);
-  const [zaloBotUsername, setZaloBotUsername] = useState<string | null>(null);
-  const [zaloBotLink, setZaloBotLink] = useState<string | null>(null);
-  const [pushedToZalo, setPushedToZalo] = useState(false);
-
   useEffect(() => {
     clearError();
-  }, [clearError, mode, otpChannel]);
+  }, [clearError, mode]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -65,7 +57,6 @@ export function useLoginForm() {
     setInfoMessage(null);
     try {
       const response = await sendOtp({
-        channel: otpChannel,
         purpose: "login",
         identifier,
       });
@@ -73,10 +64,6 @@ export function useLoginForm() {
       setOtpCode("");
       setCooldown(response.cooldownSeconds || 60);
       setInfoMessage(response.message);
-      setZaloBotName(response.zaloBotName || null);
-      setZaloBotUsername(response.zaloBotUsername || null);
-      setZaloBotLink(response.zaloBotLink || null);
-      setPushedToZalo(Boolean(response.pushedToZalo));
     } catch {
       // Error is caught and stored in useAuthStore
     }
@@ -92,7 +79,6 @@ export function useLoginForm() {
     setInfoMessage(null);
     try {
       await loginWithOtp({
-        channel: otpChannel,
         identifier,
         otpCode,
       });
@@ -115,8 +101,6 @@ export function useLoginForm() {
   return {
     mode,
     setMode,
-    otpChannel,
-    setOtpChannel,
     identifier,
     setIdentifier,
     password,
@@ -128,10 +112,6 @@ export function useLoginForm() {
     cooldown,
     infoMessage,
     setInfoMessage,
-    zaloBotName,
-    zaloBotUsername,
-    zaloBotLink,
-    pushedToZalo,
     isSubmitting,
     error,
     handlePasswordSubmit,
@@ -140,4 +120,3 @@ export function useLoginForm() {
     handleGoogleCredential,
   };
 }
-

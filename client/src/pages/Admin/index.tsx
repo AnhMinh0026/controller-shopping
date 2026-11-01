@@ -1,6 +1,7 @@
 import { ConfigProvider, Spin, theme } from "antd";
 import AdminHeader from "../../components/layout/AdminLayout/AdminHeader";
 import AdminSidebar from "../../components/layout/AdminLayout/AdminSidebar";
+import OrdersView from "./components/OrdersView";
 import OverviewView from "./components/OverviewView";
 import ProductModal from "./components/ProductModal";
 import ProductsView from "./components/ProductsView";
@@ -16,8 +17,11 @@ export default function AdminDashboardPage() {
     stats,
     users,
     products,
+    orders,
+    sepayInfo,
     isLoading,
     isRefreshing,
+    isSyncingSepay,
     isProductModalOpen,
     editingProduct,
     isSavingProduct,
@@ -26,6 +30,9 @@ export default function AdminDashboardPage() {
     handleDeleteUser,
     handleSaveProduct,
     handleDeleteProduct,
+    handleSyncSepay,
+    handleSimulateSepay,
+    handleUpdateOrderStatus,
     handleOpenAddModal,
     handleOpenEditModal,
     handleCloseModal,
@@ -89,6 +96,15 @@ export default function AdminDashboardPage() {
                 users={users}
                 onToggleRole={handleToggleRole}
                 onDeleteUser={handleDeleteUser}
+              />
+            ) : currentView === "orders" ? (
+              <OrdersView
+                orders={orders}
+                sepayInfo={sepayInfo}
+                isSyncingSepay={isSyncingSepay}
+                onSyncSepay={handleSyncSepay}
+                onSimulateSepay={handleSimulateSepay}
+                onUpdateStatus={handleUpdateOrderStatus}
               />
             ) : null}
           </main>

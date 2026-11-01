@@ -64,14 +64,18 @@ export default function MobileNavMenu({
                 </Link>
               )}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+                <Link
+                  to="/profile"
+                  onClick={onClose}
+                  className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5"
+                >
                   <span className="text-xs font-semibold text-white">
                     {user.name}
                   </span>
                   <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand">
-                    {user.role}
+                    Profile & Orders
                   </span>
-                </div>
+                </Link>
                 <button
                   type="button"
                   onClick={() => {
